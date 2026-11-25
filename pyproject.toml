@@ -1,0 +1,11 @@
+[project]
+name = "fse-6-2026-story-generator"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.164.0",
+    "openai>=3.57.0",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]

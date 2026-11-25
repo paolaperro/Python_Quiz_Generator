@@ -7,26 +7,26 @@
   <style>
     :root {
       font-family: system-ui, sans-serif;
-      color: #182d28;
-      background: #f3f6f1;
-      --green: #205c49;
-      --muted: #4d635a;
-      --line: #cbd8cf;
-      --tint: #e7f0e9;
+      color: #152f2b;
+      background: #edf4f1;
+      --green: #146251;
+      --muted: #4b635e;
+      --line: #bed1c9;
+      --tint: #e1f1e9;
     }
 
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
-    body { margin: 0; line-height: 1.5; }
-    h1, h2, p { margin: 0; }
+    body { margin: 0; min-height: 100vh; line-height: 1.5; background: linear-gradient(150deg, #e2f1eb, #faf9f4 85%); }
+    h1, h2, h3, p { margin: 0; }
     button, input, textarea { font: inherit; }
     :focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
 
     header { background: #183c31; color: white; }
     header div, main { max-width: 780px; margin: auto; padding-inline: 22px; }
-    header div { padding-block: 15px; font-size: 19px; font-weight: 750; }
+    header div { padding-block: 13px; font-size: 19px; font-weight: 750; }
 
-    main { padding-block: clamp(30px, 6vw, 58px) 32px; }
+    main { padding-block: clamp(24px, 5vw, 44px) 32px; }
     h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.08; letter-spacing: -.04em; }
     h2 { font-size: clamp(23px, 4vw, 31px); line-height: 1.25; }
     .intro { margin-top: 12px; color: var(--muted); max-width: 54ch; }
@@ -35,8 +35,9 @@
       margin-top: 25px;
       padding: clamp(18px, 4vw, 30px);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 20px;
       background: white;
+      box-shadow: 0 16px 48px #17423712;
     }
 
     fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
@@ -78,32 +79,121 @@
       cursor: pointer;
     }
     button:hover:not(:disabled) { background: #164635; }
-    button:disabled { opacity: .65; cursor: default; }
+    button:disabled { opacity: .54; cursor: default; }
     .secondary { background: white; color: var(--green); }
     .secondary:hover:not(:disabled) { background: var(--tint); }
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
     #status:not(:empty) { margin-top: 12px; }
     #status.error { color: #862e27; }
 
-    #progress-label { margin-top: 14px; color: var(--muted); }
-    progress { display: block; width: 100%; height: 10px; margin-top: 7px; accent-color: var(--green); }
-    .summary { margin-top: 20px; padding: 16px; border-radius: 9px; background: var(--tint); }
-    .summary h3 { margin: 0 0 5px; font-size: 1.15rem; }
+    .quiz-head, .progress-meta, .review-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    #quiz-title { font-size: clamp(24px, 4vw, 34px); overflow-wrap: anywhere; }
+    .progress-panel {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #183c31;
+      color: white;
+      font-size: .9rem;
+      font-weight: 650;
+    }
+    progress { display: block; width: 100%; height: 10px; margin-top: 10px; accent-color: #91e0be; }
+    .level {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .85rem;
+      font-weight: 700;
+      background: #dbf3e3;
+      color: #215835;
+    }
+    .level.media { background: #fff1cd; color: #745211; }
+    .level.difficile { background: #fae2db; color: #812f23; }
+    .question { margin-top: 24px; animation: enter .2s ease-out both; }
+    #question-title { margin-bottom: 9px; font-size: clamp(1.15rem, 3vw, 1.45rem); overflow-wrap: anywhere; }
+    .option {
+      position: relative;
+      align-items: center;
+      margin-top: 9px;
+      padding: 12px;
+      min-height: 50px;
+      overflow-wrap: anywhere;
+      transition: background-color .15s, border-color .15s;
+    }
+    .option:hover { background: #f1f8f4; border-color: var(--green); }
+    .option:has(:focus-visible) { outline: 3px solid var(--green); outline-offset: 2px; }
+    .option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .option-key {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: #e9f1ec;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .option:has(:checked) .option-key { background: var(--green); color: white; }
+    .question-actions { justify-content: space-between; }
 
-    .question { margin-top: 22px; }
-    .question legend { width: 100%; padding-top: 16px; border-top: 1px solid var(--line); }
-    .option { margin-top: 7px; overflow-wrap: anywhere; }
-    .option:has(input:disabled) { cursor: default; }
-    .option.correct { background: #e5f1e8; border-color: #427b53; }
-    .option.wrong { background: #fbece9; border-color: #b35d4e; }
-    .feedback { margin-top: 9px; color: var(--muted); overflow-wrap: anywhere; }
-    .feedback strong { color: #182d28; }
-    .feedback p + p { margin-top: 4px; }
+    .summary { margin-top: 22px; animation: enter .2s ease-out both; }
+    .score-panel {
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--tint);
+    }
+    .score-panel h2, #review-title { font-size: 1.15rem; }
+    #score-value { display: block; font-size: clamp(2rem, 8vw, 3rem); line-height: 1.3; font-weight: 750; }
+    #score-text, #review-position { color: var(--muted); }
+    .review { margin-top: 24px; }
+    #review-filter { margin-top: 4px; }
+    #review-empty { padding: 13px 0; color: var(--muted); }
+    .review-track {
+      display: flex;
+      margin-top: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #f7faf8;
+    }
+    .review-card {
+      flex: 0 0 100%;
+      min-width: 0;
+      padding: clamp(12px, 3vw, 20px);
+      overflow-wrap: anywhere;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .review-card h3 { margin: 9px 0 13px; font-size: 1.05rem; }
+    .review-card p + p { margin-top: 8px; }
+    .wrong-answer { color: #812f23; }
+    .right-answer { color: #215835; }
+    .review-controls { margin-top: 10px; }
     footer { margin-top: 22px; }
     a { color: var(--green); }
 
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .question, .summary, .option { animation: none; transition: none; }
+      .review-track { scroll-behavior: auto; }
+    }
+
     @media (max-width: 480px) {
       header div, main { padding-inline: 14px; }
+      .review-controls button { padding-inline: 8px; }
     }
   </style>
 </head>
@@ -111,55 +201,85 @@
   <header><div>QuizLab</div></header>
 
   <main>
-    <h1>Genera un quiz</h1>
-    <p class="intro">Parti da un argomento o dai tuoi appunti e ripassa con 10 domande a scelta multipla.</p>
+    <div id="setup">
+      <h1>Genera un quiz</h1>
+      <p class="intro">Parti da un argomento o dai tuoi appunti e ripassa con 10 domande a difficoltà crescente.</p>
 
-    <section class="card" aria-label="Generazione del quiz">
-      <form id="generate-form">
-        <fieldset>
-          <legend>Da cosa vuoi partire?</legend>
-          <div class="mode">
-            <label><input type="radio" name="mode" value="argomento" checked> Argomento</label>
-            <label><input type="radio" name="mode" value="fonti"> Appunti</label>
+      <section class="card" aria-label="Generazione del quiz">
+        <form id="generate-form">
+          <fieldset>
+            <legend>Da cosa vuoi partire?</legend>
+            <div class="mode">
+              <label><input type="radio" name="mode" value="argomento" checked> Argomento</label>
+              <label><input type="radio" name="mode" value="fonti"> Appunti</label>
+            </div>
+          </fieldset>
+
+          <div class="source-field" id="topic-field">
+            <label class="field-label" for="argomento">Argomento del quiz</label>
+            <input type="text" id="argomento" maxlength="120" placeholder="Es. Python, fotosintesi, Rinascimento" required>
           </div>
-        </fieldset>
 
-        <div class="source-field" id="topic-field">
-          <label class="field-label" for="argomento">Argomento del quiz</label>
-          <input type="text" id="argomento" maxlength="120" placeholder="Es. Python, fotosintesi, Rinascimento" required>
-        </div>
+          <div class="source-field" id="notes-field" hidden>
+            <label class="field-label" for="fonti">Testo degli appunti</label>
+            <textarea id="fonti" minlength="30" maxlength="50000" aria-describedby="notes-hint"
+              placeholder="Incolla il materiale che vuoi ripassare" required disabled></textarea>
+            <p class="hint" id="notes-hint">Da 30 a 50.000 caratteri.</p>
+          </div>
 
-        <div class="source-field" id="notes-field" hidden>
-          <label class="field-label" for="fonti">Testo degli appunti</label>
-          <textarea id="fonti" minlength="30" maxlength="50000" aria-describedby="notes-hint"
-            placeholder="Incolla il materiale che vuoi ripassare" required disabled></textarea>
-          <p class="hint" id="notes-hint">Da 30 a 50.000 caratteri.</p>
-        </div>
-
-        <div class="actions"><button id="generate" type="submit">Genera quiz</button></div>
-        <p id="status" role="status"></p>
-      </form>
-    </section>
+          <div class="actions"><button id="generate" type="submit">Genera quiz</button></div>
+          <p id="status" role="status"></p>
+        </form>
+      </section>
+    </div>
 
     <section id="quiz" class="card" hidden aria-labelledby="quiz-title">
-      <h2 id="quiz-title" tabindex="-1"></h2>
-      <div id="progress">
-        <p id="progress-label"></p>
+      <div class="quiz-head">
+        <h1 id="quiz-title"></h1>
+        <button type="button" class="secondary" id="new-quiz">Nuovo quiz</button>
+      </div>
+      <div id="progress" class="progress-panel">
+        <div class="progress-meta">
+          <p id="progress-label"></p>
+          <span id="difficulty" class="level"></span>
+        </div>
         <progress id="progress-bar" aria-labelledby="progress-label"></progress>
       </div>
 
-      <section id="score" class="summary" hidden aria-labelledby="score-title">
-        <h3 id="score-title" tabindex="-1">Riepilogo delle risposte</h3>
-        <p id="score-text"></p>
-      </section>
-
       <form id="answers">
         <div id="questions"></div>
-        <div class="actions">
-          <button type="submit" id="check">Correggi le risposte</button>
-          <button type="button" class="secondary" id="retry" hidden>Riprova il quiz</button>
+        <div class="actions question-actions">
+          <button type="button" class="secondary" id="previous-question">Indietro</button>
+          <button type="submit" id="next-question">Continua</button>
         </div>
       </form>
+
+      <section id="score" class="summary" hidden aria-labelledby="score-title">
+        <div class="score-panel">
+          <h2 id="score-title" tabindex="-1">Riepilogo delle risposte</h2>
+          <strong id="score-value"></strong>
+          <p id="score-text"></p>
+        </div>
+        <section class="review" aria-labelledby="review-title">
+          <h2 id="review-title">Correzione</h2>
+          <fieldset id="review-filter" aria-label="Risposte da rivedere">
+            <div class="mode">
+              <label><input type="radio" name="review" value="errors" checked> Solo errori</label>
+              <label><input type="radio" name="review" value="all"> Tutte le risposte</label>
+            </div>
+          </fieldset>
+          <p id="review-empty" hidden>Hai risposto correttamente a tutte le domande.</p>
+          <div id="review-track" class="review-track" role="region" aria-label="Scorri le correzioni" tabindex="0"></div>
+          <div id="review-controls" class="review-controls">
+            <button type="button" class="secondary" id="review-previous">Precedente</button>
+            <span id="review-position" aria-live="polite"></span>
+            <button type="button" class="secondary" id="review-next">Successiva</button>
+          </div>
+        </section>
+        <div class="actions">
+          <button type="button" id="retry">Riprova il quiz</button>
+        </div>
+      </section>
     </section>
 
     <footer>Argomenti e appunti vengono inviati al servizio AI configurato. Le risposte generate possono contenere errori. · <a href="/docs">API</a></footer>
@@ -174,18 +294,30 @@
     const notes = document.getElementById('fonti');
     const generateButton = document.getElementById('generate');
     const statusMessage = document.getElementById('status');
+    const setup = document.getElementById('setup');
     const quizSection = document.getElementById('quiz');
     const quizTitle = document.getElementById('quiz-title');
     const questions = document.getElementById('questions');
     const progress = document.getElementById('progress');
     const progressLabel = document.getElementById('progress-label');
     const progressBar = document.getElementById('progress-bar');
+    const difficulty = document.getElementById('difficulty');
     const score = document.getElementById('score');
     const scoreTitle = document.getElementById('score-title');
+    const scoreValue = document.getElementById('score-value');
     const scoreText = document.getElementById('score-text');
-    const checkButton = document.getElementById('check');
-    const retryButton = document.getElementById('retry');
+    const previousQuestion = document.getElementById('previous-question');
+    const nextQuestion = document.getElementById('next-question');
+    const reviewFilter = document.getElementById('review-filter');
+    const reviewTrack = document.getElementById('review-track');
+    const reviewControls = document.getElementById('review-controls');
+    const reviewPosition = document.getElementById('review-position');
+    const reviewPrevious = document.getElementById('review-previous');
+    const reviewNext = document.getElementById('review-next');
+    const levels = { facile: 'Facile', media: 'Media', difficile: 'Difficile' };
     let quiz = null;
+    let questionIndex = 0;
+    let answers = [];
 
     function createElement(tag, text = '', className = '') {
       const element = document.createElement(tag);
@@ -202,44 +334,120 @@
       notes.disabled = useTopic;
     }
 
-    function updateProgress() {
-      const selected = questions.querySelectorAll('input:checked').length;
+    function showQuestion() {
+      const question = quiz.quiz_questions[questionIndex];
       const total = quiz.quiz_questions.length;
-      progressLabel.textContent = `${selected} di ${total} risposte selezionate`;
-      progressBar.value = selected;
+      progressLabel.textContent = `Domanda ${questionIndex + 1} di ${total}`;
       progressBar.max = total;
-    }
+      progressBar.value = questionIndex + 1;
+      difficulty.className = `level ${question.difficolta}`;
+      difficulty.textContent = levels[question.difficolta];
 
-    function renderQuiz() {
-      const fields = document.createDocumentFragment();
-
-      quiz.quiz_questions.forEach((question, index) => {
-        const field = createElement('fieldset', '', 'question');
-        field.append(createElement('legend', `${index + 1}. ${question.text}`));
-
-        question.answer.forEach((answer, optionIndex) => {
-          const label = createElement('label', '', 'option');
-          const input = document.createElement('input');
-          input.type = 'radio';
-          input.name = `q${index}`;
-          input.value = optionIndex;
-          input.required = true;
-          label.append(input, createElement('span', answer));
-          field.append(label);
-        });
-
-        fields.append(field);
+      const panel = createElement('div', '', 'question');
+      const title = createElement('h2', question.text);
+      title.id = 'question-title';
+      title.tabIndex = -1;
+      title.setAttribute('aria-describedby', 'progress-label difficulty');
+      const field = createElement('fieldset');
+      field.setAttribute('aria-labelledby', title.id);
+      panel.append(title, field);
+      question.answer.forEach((answer, optionIndex) => {
+        const label = createElement('label', '', 'option');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'answer';
+        input.value = optionIndex;
+        input.required = true;
+        input.checked = answers[questionIndex] === optionIndex;
+        const letter = createElement('span', 'ABCD'[optionIndex], 'option-key');
+        letter.setAttribute('aria-hidden', 'true');
+        label.append(input, letter, createElement('span', answer));
+        field.append(label);
       });
 
-      questions.replaceChildren(fields);
+      questions.replaceChildren(panel);
+      previousQuestion.disabled = questionIndex === 0;
+      nextQuestion.disabled = answers[questionIndex] === null;
+      nextQuestion.textContent = questionIndex === total - 1 ? 'Vedi il risultato' : 'Continua';
+      title.focus();
+    }
+
+    function startQuiz() {
+      questionIndex = 0;
+      answers = Array(quiz.quiz_questions.length).fill(null);
       quizTitle.textContent = quiz.title;
+      setup.hidden = true;
       quizSection.hidden = false;
       score.hidden = true;
       progress.hidden = false;
-      checkButton.hidden = false;
-      retryButton.hidden = true;
-      updateProgress();
-      quizTitle.focus();
+      answersForm.hidden = false;
+      showQuestion();
+    }
+
+    function currentReview() {
+      return Math.round(reviewTrack.scrollLeft / (reviewTrack.clientWidth || 1));
+    }
+
+    function updateReviewPosition() {
+      const index = currentReview();
+      const total = reviewTrack.children.length;
+      const position = total ? `${index + 1} di ${total}` : '';
+      if (reviewPosition.textContent !== position) reviewPosition.textContent = position;
+      reviewPrevious.disabled = index === 0;
+      reviewNext.disabled = index >= total - 1;
+    }
+
+    function moveReview(direction) {
+      const left = (currentReview() + direction) * reviewTrack.clientWidth;
+      reviewTrack.scrollTo({ left });
+    }
+
+    function renderReview() {
+      const onlyErrors = reviewFilter.querySelector('input:checked').value === 'errors';
+      const cards = [];
+
+      quiz.quiz_questions.forEach((question, index) => {
+        const selected = answers[index];
+        const correctIndex = question.correct_answer_index;
+        const isCorrect = selected === correctIndex;
+        if (onlyErrors && isCorrect) return;
+
+        const card = createElement('article', '', 'review-card');
+        const level = createElement('span', levels[question.difficolta], `level ${question.difficolta}`);
+        const title = createElement('h3', `${index + 1}. ${question.text}`);
+        const choice = createElement('p', '', isCorrect ? 'right-answer' : 'wrong-answer');
+        const choiceLabel = isCorrect ? 'La tua risposta (corretta): ' : 'La tua risposta: ';
+        choice.append(createElement('strong', choiceLabel), question.answer[selected]);
+        const solution = createElement('p', '', 'right-answer');
+        solution.append(createElement('strong', 'Risposta corretta: '), question.answer[correctIndex]);
+        card.append(level, title, choice);
+        if (!isCorrect) card.append(solution);
+        if (question.spiegazione) card.append(createElement('p', question.spiegazione));
+        cards.push(card);
+      });
+
+      reviewTrack.replaceChildren(...cards);
+      reviewTrack.hidden = cards.length === 0;
+      reviewControls.hidden = cards.length === 0;
+      document.getElementById('review-empty').hidden = cards.length > 0;
+      reviewTrack.scrollTo({ left: 0, behavior: 'instant' });
+      updateReviewPosition();
+    }
+
+    function showResults() {
+      let correct = 0;
+      quiz.quiz_questions.forEach((question, index) => {
+        if (answers[index] === question.correct_answer_index) correct++;
+      });
+      const total = quiz.quiz_questions.length;
+      scoreValue.textContent = `${correct}/${total}`;
+      scoreText.textContent = `Corrette: ${correct} · Sbagliate: ${total - correct}`;
+      progress.hidden = true;
+      answersForm.hidden = true;
+      score.hidden = false;
+      reviewFilter.querySelector('input[value="errors"]').checked = true;
+      renderReview();
+      scoreTitle.focus();
     }
 
     function showStatus(message, error = false) {
@@ -261,8 +469,12 @@
           : 'Controlla la lunghezza dell’argomento o degli appunti.';
         throw new Error(message);
       }
-      if (!data.quiz || !Array.isArray(data.quiz.quiz_questions) || data.quiz.quiz_questions.length !== 10) {
+      const generatedQuestions = data.quiz?.quiz_questions;
+      if (!Array.isArray(generatedQuestions) || generatedQuestions.length !== 10) {
         throw new Error('Il server non ha restituito un quiz valido.');
+      }
+      if (generatedQuestions.some(question => !Object.hasOwn(levels, question.difficolta))) {
+        throw new Error('Il quiz non contiene i livelli di difficoltà. Riavvia il server e riprova.');
       }
       return data.quiz;
     }
@@ -294,8 +506,8 @@
 
       try {
         quiz = await requestQuiz(payload);
-        renderQuiz();
-        showStatus('Quiz pronto.');
+        showStatus('');
+        startQuiz();
       } catch (error) {
         let message = error.message;
         if (error instanceof TypeError) message = 'Connessione non riuscita. Verifica che il server sia avviato.';
@@ -306,48 +518,36 @@
       }
     });
 
-    answersForm.addEventListener('change', updateProgress);
+    answersForm.addEventListener('change', event => {
+      answers[questionIndex] = Number(event.target.value);
+      nextQuestion.disabled = false;
+    });
 
     answersForm.addEventListener('submit', event => {
       event.preventDefault();
-      if (!quiz || !score.hidden) return;
-
-      let correct = 0;
-
-      for (const [index, field] of Array.from(questions.children).entries()) {
-        const question = quiz.quiz_questions[index];
-        const selected = Number(field.querySelector('input:checked').value);
-        const correctIndex = question.correct_answer_index;
-        const isCorrect = selected === correctIndex;
-        if (isCorrect) correct++;
-
-        const options = field.querySelectorAll('label');
-        options[correctIndex].classList.add('correct');
-        if (!isCorrect) options[selected].classList.add('wrong');
-        field.disabled = true;
-
-        const feedback = createElement('div', '', 'feedback');
-        const choice = createElement('p');
-        const outcome = isCorrect ? 'Corretto. ' : 'Sbagliato. ';
-        choice.append(createElement('strong', outcome), `Hai risposto: ${question.answer[selected]}`);
-        feedback.append(choice);
-        if (!isCorrect) {
-          feedback.append(createElement('p', `Risposta corretta: ${question.answer[correctIndex]}`));
-        }
-        if (question.spiegazione) feedback.append(createElement('p', question.spiegazione));
-        field.append(feedback);
+      if (answers[questionIndex] === null) return;
+      if (questionIndex === quiz.quiz_questions.length - 1) {
+        showResults();
+      } else {
+        questionIndex++;
+        showQuestion();
       }
-
-      const total = quiz.quiz_questions.length;
-      scoreText.textContent = `Punteggio ${correct}/${total} · Corrette: ${correct} · Sbagliate: ${total - correct}`;
-      score.hidden = false;
-      progress.hidden = true;
-      checkButton.hidden = true;
-      retryButton.hidden = false;
-      scoreTitle.focus();
     });
 
-    retryButton.addEventListener('click', renderQuiz);
+    previousQuestion.addEventListener('click', () => {
+      questionIndex--;
+      showQuestion();
+    });
+    reviewTrack.addEventListener('scroll', updateReviewPosition);
+    reviewFilter.addEventListener('change', renderReview);
+    reviewPrevious.addEventListener('click', () => moveReview(-1));
+    reviewNext.addEventListener('click', () => moveReview(1));
+    document.getElementById('retry').addEventListener('click', startQuiz);
+    document.getElementById('new-quiz').addEventListener('click', () => {
+      quizSection.hidden = true;
+      setup.hidden = false;
+      (topic.disabled ? notes : topic).focus();
+    });
   </script>
 </body>
 </html>

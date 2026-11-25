@@ -2,7 +2,9 @@
 
 Un generatore di quiz in italiano per ripassare con 10 domande a scelta multipla. Puoi scrivere un argomento, per esempio **Python**, oppure incollare i tuoi appunti.
 
-Alla fine trovi il punteggio, le risposte che hai scelto e la correzione con una breve spiegazione per domanda. Puoi ripetere lo stesso quiz direttamente dalla pagina.
+Rispondi a una domanda alla volta. Le prime 3 sono facili, le successive 4 sono di difficoltà media e le ultime 3 sono difficili.
+
+Alla fine trovi il punteggio e puoi scorrere le correzioni degli errori oppure rivedere tutte le risposte. Ogni correzione include una breve spiegazione. Puoi anche ripetere lo stesso quiz direttamente dalla pagina.
 
 ## Avvio
 

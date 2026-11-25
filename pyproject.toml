@@ -1,7 +1,7 @@
 [project]
-name = "fse-6-2026-story-generator"
+name = "Python_Quiz_Generator"
 version = "0.1.0"
-description = "Add your description here"
+description = "Genera quiz in italiano da un argomento o dagli appunti."
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.164.0",
